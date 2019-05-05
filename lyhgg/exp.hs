@@ -1,0 +1,2 @@
+-- Learn you haskell for great good
+-- Types and type classes
