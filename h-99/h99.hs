@@ -1,3 +1,5 @@
+import Data.List as List
+
 -- | Extract the last element from a list, which must be finite and non-empty
 myLast :: [a] -> a
 myLast [] = errorWithoutStackTrace "Empty list"
@@ -141,3 +143,86 @@ dropEvery a n = dropHelper a n 1
         dropHelper (x:xs) n k
             | k == n = dropHelper xs n 1
             | otherwise = x : dropHelper xs n (k + 1)
+
+-- | Problem 17: Split a list into two parts; the length of the first part is given
+split :: [a] -> Int -> ([a], [a])
+split a n = (getFirst a n, getLast a n)
+    where
+        getFirst [] n = []
+        getFirst (x:xs) n
+            | n == 1 = [x]
+            | otherwise = x : getFirst xs (n - 1)
+        getLast [] _ = []
+        getLast (_:xs) n
+            | n == 0 = xs
+            | otherwise = getLast xs (n - 1)
+
+
+-- | Problem 18: Extract a slice from a list. 
+slice :: [a] -> Int -> Int -> [a]
+slice (x:_) _ 1 = [x]
+slice (x:xs) 1 k = x : slice xs 1 (k - 1) 
+slice (x:xs) i k = slice xs (i - 1) (k - 1)
+
+-- use built-in function
+slice' :: [a] -> Int -> Int -> [a]
+slice' a i k = take (k - i + 1) $ drop (i - 1) a
+
+-- | Problem 19: Rotate a list N places to left
+rotate :: [a] -> Int -> [a]
+rotate s@(x:xs) n
+    | n > 0 = rotate xs (n - 1) ++ [x]
+    | n < 0 = rotate (last s : init s) (n + 1)
+    | otherwise = s
+
+-- | Problem 20: Remove the K'th element from a list. 
+removeAt :: Int -> [a] -> (a, [a])
+removeAt k a = (a !! (k - 1), take (k - 1) a ++ drop k a)
+
+-- | Problem 21: Insert an element at a given position into a list. 
+-- insertAt 'X' "abcd" 2 => "aXbcd"
+insertAt :: a -> [a] -> Int -> [a]
+insertAt i a k = take (k - 1) a ++ [i] ++ drop (k - 1) a
+
+-- recursion without helper (same idea behinde)
+insertAt' :: a -> [a] -> Int -> [a]
+insertAt' i a 1 = i : a
+insertAt' i (x:xs) k = x : insertAt i xs (k - 1)
+
+-- | Problem 22: Create a list containing all integers within a given range. 
+-- range 4 9 => [4,5,6,7,8,9]
+range :: Int -> Int -> [Int]
+range x y = [x..y]
+
+-- stupid complex
+range' x y = take (y - x + 1) $ iterate (+1) x
+
+-- | Problem 23: Extract a given number of randomly selected elements from a list. 
+-- rnd_select "abcdefgh" 3 >>= putStrLn
+-- eda
+-- TODO
+
+-- | Problem 27: Group the elements of a set into disjoint subsets
+
+{- Problem 28: Sorting a list of lists according to length of sublists 
+λ> lsort ["abc","de","fgh","de","ijkl","mn","o"]
+["o","de","de","mn","abc","fgh","ijkl"]
+-}
+lsort :: Ord a => [[a]] -> [[a]]
+lsort a = sortBy compareList a
+    where
+        compareList x y = compare (length x) (length y)
+
+{- Problem 31: Determine whether a given integer number is prime
+- isPrime 7 => True
+-}
+isPrime :: Int -> Bool
+isPrime n
+    | n < 2 = False
+    | otherwise = not (diviable n (n - 1))
+        where
+            diviable _ 1 = False
+            diviable n k =
+                if n `mod` k == 0
+                    then True
+                    else diviable n (k - 1)
