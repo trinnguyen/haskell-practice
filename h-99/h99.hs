@@ -226,3 +226,51 @@ isPrime n
                 if n `mod` k == 0
                     then True
                     else diviable n (k - 1)
+
+{- Problem 32: Determine the greatest common divisor of two positive integer numbers. Use Euclid's algorithm. 
+λ> [myGCD 36 63, myGCD (-3) (-6), myGCD (-3) 6]
+[9,3,3]
+-}
+myGCD :: Int -> Int -> Int
+myGCD x 0 = abs x
+myGCD x y = myGCD (abs y) (abs x `mod` abs y)
+
+{- Problem 33: Determine whether two positive integer numbers are coprime. Two numbers are coprime if their greatest common divisor equals 1. 
+coprime 35 64 => True
+    -}
+coprime :: Int -> Int -> Bool
+coprime x y = (myGCD x y) == 1
+
+{- Problem 34: Calculate Euler's totient function phi(m). 
+Euler's so-called totient function phi(m) is defined as the number of positive integers r (1 <= r < m) that are coprime to m.
+
+Example: m = 10: r = 1,3,7,9; thus phi(m) = 4. Note the special case: phi(1) = 1. 
+totient 10 => 4
+-}
+
+{- Problem 39: A list of prime numbers -}
+primesR :: Int -> Int -> [Int]
+primesR x y
+    | x == y =
+        if isPrime x
+            then [x]
+            else []
+    | otherwise =
+        if isPrime x
+            then x : primesR (x + 1) y
+            else primesR (x + 1) y
+
+-- 99 questions/54A to 60
+
+-- In Haskell, we can characterize binary trees with a datatype definition: 
+data Tree a = Empty | Branch a (Tree a) (Tree a)
+              deriving (Show, Eq)
+
+{- Problem 96: Syntax checker 
+λ> identifier "this-is-a-long-identifier"
+True
+λ> identifier "this-ends-in-"            
+False
+λ> identifier "two--hyphens" 
+False
+-}
